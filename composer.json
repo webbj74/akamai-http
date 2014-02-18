@@ -1,0 +1,30 @@
+{
+    "name": "webbj74/akamai-http",
+    "type": "library",
+    "description": "PHP-based toolkit for interfacing with Akamai-fronted websites.",
+    "keywords": ["akamai"],
+    "homepage": "https://github.com/webbj74/akamai-http",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "See contributors",
+            "homepage": "https://github.com/webbj74/akamai-http/graphs/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "guzzle/http": "~3.8"
+    },
+    "require-dev": {
+        "phpmd/phpmd": "~1.0",
+        "phpunit/phpunit": "~3.0",
+        "satooshi/php-coveralls": "*",
+        "guzzle/plugin": "~3.8"
+    },
+    "autoload": {
+        "psr-0": {
+            "Akamai\\Http": "src/"
+        }
+    }
+}
+
