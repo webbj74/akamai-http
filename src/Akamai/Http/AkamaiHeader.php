@@ -38,7 +38,7 @@ class AkamaiHeader
             throw new \InvalidArgumentException(sprintf('%s: Expected $url to be a string.', __METHOD__));
         }
         if (!is_string($parameter)) {
-            throw new \InvalidArgumentException(sprintf('%s: Expected $options to be a string.', __METHOD__));
+            throw new \InvalidArgumentException(sprintf('%s: Expected $parameter to be a string.', __METHOD__));
         }
         if (!is_array($options)) {
             throw new \InvalidArgumentException(sprintf('%s: Expected $options to be an array.', __METHOD__));
