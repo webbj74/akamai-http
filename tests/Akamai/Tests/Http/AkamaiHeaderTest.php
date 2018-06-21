@@ -6,8 +6,9 @@ use \Akamai\Http\AkamaiHeader;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Mock\MockPlugin;
+use PHPUnit\Framework\TestCase;
 
-class AkamaiHeaderTest extends \PHPUnit_Framework_TestCase
+class AkamaiHeaderTest extends TestCase
 {
     /**
      * @covers \Akamai\Http\AkamaiHeader::getAkamaiTrueCacheKey
