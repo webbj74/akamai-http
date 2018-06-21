@@ -17,7 +17,7 @@
     },
     "require-dev": {
         "phpmd/phpmd": "~1.0",
-        "phpunit/phpunit": "~3.0",
+        "phpunit/phpunit": "~5.0||~6.0||~7.0",
         "satooshi/php-coveralls": "~0.6",
         "guzzle/plugin": "~3.8"
     },
