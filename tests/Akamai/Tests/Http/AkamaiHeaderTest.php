@@ -3,9 +3,11 @@
 namespace Akamai\Tests\Http;
 
 use \Akamai\Http\AkamaiHeader;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Message\Response;
-use Guzzle\Plugin\Mock\MockPlugin;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use PHPUnit\Framework\TestCase;
 
 class AkamaiHeaderTest extends TestCase
@@ -16,12 +18,15 @@ class AkamaiHeaderTest extends TestCase
     public function testCallingGetAkamaiTrueCacheKeyWithAnAkamaiHostReturnsACacheKeyString()
     {
         $trueCacheKey = '/L/localhost/';
-        $mock = new MockPlugin(array(new Response(200, array('X-True-Cache-Key' => $trueCacheKey))));
-        $result = AkamaiHeader::getAkamaiTrueCacheKey('http://localhost', array('plugins' => array($mock)));
-        $requests = $mock->getReceivedRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('GET', $requests[0]->getMethod());
-        $this->assertEquals('Akamai-X-Get-True-Cache-Key', (string) $requests[0]->getHeader('Pragma'));
+        $mock = new MockHandler([
+            new Response(200, ['X-True-Cache-Key' => $trueCacheKey])
+        ]);
+        $handler = HandlerStack::create($mock);
+        $result = AkamaiHeader::getAkamaiTrueCacheKey('http://localhost', ['handler' => $handler]);
+        $request = $mock->getLastRequest();
+
+        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('Akamai-X-Get-True-Cache-Key', $request->getHeaderLine('Pragma'));
         $this->assertEquals($trueCacheKey, $result);
     }
 
@@ -30,25 +35,30 @@ class AkamaiHeaderTest extends TestCase
      */
     public function testCallingGetAkamaiTrueCacheKeyWithANonAkamaiHostReturnsAnEmptyString()
     {
-        $mock = new MockPlugin(array(new Response(200)));
-        $result = AkamaiHeader::getAkamaiTrueCacheKey('http://localhost', array('plugins' => array($mock)));
-        $requests = $mock->getReceivedRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('GET', $requests[0]->getMethod());
-        $this->assertEquals('Akamai-X-Get-True-Cache-Key', (string) $requests[0]->getHeader('Pragma'));
+        $mock = new MockHandler([
+            new Response(200)
+        ]);
+        $handler = HandlerStack::create($mock);
+        $result = AkamaiHeader::getAkamaiTrueCacheKey('http://localhost', ['handler' => $handler]);
+        $request = $mock->getLastRequest();
+        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('Akamai-X-Get-True-Cache-Key', $request->getHeaderLine('Pragma'));
         $this->assertEquals('', $result);
     }
 
     /**
      * @covers \Akamai\Http\AkamaiHeader::getAkamaiTrueCacheKey
-     * @expectedException \Guzzle\Http\Exception\CurlException
+     * @expectedException \GuzzleHttp\Exception\RequestException
      * @expectedExceptionMessage [curl] 6: Could not resolve host: localhost [url] http://localhost
      */
     public function testCallingGetAkamaiTrueCacheKeyWithANonexistentDomainThrowsAnException()
     {
         $exception = "[curl] 6: Could not resolve host: localhost [url] http://localhost";
-        $mock = new MockPlugin(array(new CurlException($exception)));
-        AkamaiHeader::getAkamaiTrueCacheKey('http://localhost', array('plugins' => array($mock)));
+        $mock = new MockHandler([
+            new RequestException($exception, new Request('GET', 'http://localhost'))
+        ]);
+        $handler = HandlerStack::create($mock);
+        AkamaiHeader::getAkamaiTrueCacheKey('http://localhost', ['handler' => $handler]);
     }
 
     /**
@@ -87,12 +97,14 @@ class AkamaiHeaderTest extends TestCase
     public function testCallingGetAkamaiHeaderWithValidParmeters()
     {
         $trueCacheKey = '/L/localhost/';
-        $mock = new MockPlugin(array(new Response(200, array('X-True-Cache-Key' => $trueCacheKey))));
-        $result = AkamaiHeader::getAkamaiHeader('http://localhost', 'True-Cache-Key', array('plugins' => array($mock)));
-        $requests = $mock->getReceivedRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('GET', $requests[0]->getMethod());
-        $this->assertEquals('Akamai-X-Get-True-Cache-Key', (string) $requests[0]->getHeader('Pragma'));
+        $mock = new MockHandler([
+            new Response(200, ['X-True-Cache-Key' => $trueCacheKey])
+        ]);
+        $handler = HandlerStack::create($mock);
+        $result = AkamaiHeader::getAkamaiHeader('http://localhost', 'True-Cache-Key', ['handler' => $handler]);
+        $request = $mock->getLastRequest();
+        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('Akamai-X-Get-True-Cache-Key', $request->getHeaderLine('Pragma'));
         $this->assertEquals($trueCacheKey, $result);
     }
 }
