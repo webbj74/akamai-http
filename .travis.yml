@@ -11,6 +11,5 @@ before_script:
   - mkdir -pv build/logs
 
 after_script:
-  - php vendor/bin/coveralls -v
+  - travis_retry php vendor/bin/php-coveralls
   - ls -la build/logs
-
