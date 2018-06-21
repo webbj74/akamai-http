@@ -6,7 +6,7 @@
 
 namespace Akamai\Http;
 
-use \Guzzle\Http\StaticClient;
+use GuzzleHttp\Client;
 
 class AkamaiHeader
 {
@@ -49,7 +49,9 @@ class AkamaiHeader
         }
 
         $options['headers']['Pragma'] = 'Akamai-X-Get-' . $parameter;
-        $result = StaticClient::get($url, $options);
-        return (string) $result->getHeader('X-' . $parameter);
+        $client = new Client();
+        /** @var \Psr\Http\Message\ResponseInterface $result */
+        $result = $client->get($url, $options);
+        return (string) $result->getHeaderLine('X-' . $parameter);
     }
 }
