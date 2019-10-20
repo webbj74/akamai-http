@@ -18,12 +18,16 @@
     "require-dev": {
         "phpmd/phpmd": "~1.0",
         "phpunit/phpunit": "~5.0||~6.0||~7.0",
-        "php-coveralls/php-coveralls": "~2.0"
+        "php-coveralls/php-coveralls": "~2.0",
+        "phpcompatibility/php-compatibility": "*"
     },
     "autoload": {
         "psr-0": {
             "Akamai\\Http": "src/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": "vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility",
+        "post-update-cmd" : "vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility"
     }
 }
-
